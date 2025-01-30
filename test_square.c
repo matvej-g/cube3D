@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   test_square.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: matvej <matvej@student.42.fr>              +#+  +:+       +#+        */
+/*   By: wdegraf <wdegraf@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/06 14:25:56 by wdegraf           #+#    #+#             */
-/*   Updated: 2025/01/08 16:15:51 by matvej           ###   ########.fr       */
+/*   Updated: 2025/01/30 16:29:03 by wdegraf          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,6 +49,9 @@ void	ft_hook(void* param)
     }
 }
 
+/// @brief  Sehr coool
+/// @param  void
+/// @return  nix
 int32_t	main(void)
 {
 	mlx_t	*mlx;
