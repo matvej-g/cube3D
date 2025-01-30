@@ -3,17 +3,19 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: matvej <matvej@student.42.fr>              +#+  +:+       +#+         #
+#    By: wdegraf <wdegraf@student.42heilbronn.de    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/01/06 14:57:16 by wdegraf           #+#    #+#              #
-#    Updated: 2025/01/08 15:34:04 by matvej           ###   ########.fr        #
+#    Updated: 2025/01/15 16:15:38 by wdegraf          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 NAME				= cub3d
 CC					= gcc
-CFLAGS				= -I./MLX42/include -I./libft -I.
+CFLAGS				= -g -fsanitize=address -o -Wall -Wextra -Werror -I./MLX42/include -I./libft -I.
 LDFLAGS				= -L./MLX42/build -lmlx42 -L./libft -lft -lglfw -ldl -pthread -lm
+
+# -g -fsanitize=address -o 
 
 REPO_URL			= https://github.com/codam-coding-college/MLX42.git
 LOCAL_DIR			= MLX42
@@ -21,7 +23,13 @@ MLX_LIB				= $(LOCAL_DIR)/build/libmlx42.a
 LIBFT_DIR			= ./libft
 LIBFT_LIB			= $(LIBFT_DIR)/libft.a
 
-SRCS				= draw_map.c test_square.c
+SRCS				= main.c \
+					parse_map.c \
+					parse_line.c \
+					valid_map.c \
+					create_player.c \
+					draw_map.c
+					
 OBJS				= $(SRCS:.c=.o)
 
 all: clone $(LIBFT_LIB) $(MLX_LIB) $(NAME)

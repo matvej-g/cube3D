@@ -1,28 +1,4 @@
-/* ************************************************************************** */
-/*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   test_square.c                                      :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: matvej <matvej@student.42.fr>              +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/01/06 14:25:56 by wdegraf           #+#    #+#             */
-/*   Updated: 2025/01/08 16:15:51 by matvej           ###   ########.fr       */
-/*                                                                            */
-/* ************************************************************************** */
-
-#include <MLX42/MLX42.h>
 #include "cub3d.h"
-#include <stdio.h>
-#include <stdlib.h>
-#include <stdbool.h>
-
-#define WIDTH 512
-#define HEIGHT 512
-#define TILE_SIZE 64
-#define SQUARE_SIZE 64
-
-static mlx_image_t *player;
-static mlx_image_t *map_image;
 
 void	ft_hook(void* param)
 {
