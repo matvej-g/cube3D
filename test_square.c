@@ -25,6 +25,9 @@ void	ft_hook(void* param)
     }
 }
 
+/// @brief  Sehr coool
+/// @param  void
+/// @return  nix
 int32_t	main(void)
 {
 	mlx_t	*mlx;
