@@ -3,19 +3,19 @@
 /*                                                        :::      ::::::::   */
 /*   cub3d.h                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: wdegraf <wdegraf@student.42heilbronn.de    +#+  +:+       +#+        */
+/*   By: mgering <mgering@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/06 14:31:32 by wdegraf           #+#    #+#             */
-/*   Updated: 2025/01/24 11:53:06 by wdegraf          ###   ########.fr       */
+/*   Updated: 2025/02/17 14:15:24 by mgering          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef CUB3D_H
 # define CUB3D_H
 
-# include <libft/libft.h>
-
-# include <MLX42/MLX42.h>
+# include "libft/libft.h"
+# include "MLX42/include/MLX42/MLX42.h"
+//# include "MLX42/MLX42.h"
 # include <stdio.h>
 # include <stdlib.h>
 # include <stdbool.h>
@@ -70,6 +70,10 @@ void	create_player(t_c *cub, int x, int y);
 bool	map_err(char *line, int fd);
 
 //draw_map.c
-void draw_map2D(t_c *cub);
+void	draw_map2D(t_c *cub);
+
+//create_player.c
+bool	collision(t_c *cub, float x, float y);
+bool	is_wall(t_c *cub, float px, float py);
 
 #endif

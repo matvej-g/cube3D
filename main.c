@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: wdegraf <wdegraf@student.42heilbronn.de    +#+  +:+       +#+        */
+/*   By: mgering <mgering@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/06 17:55:10 by wdegraf           #+#    #+#             */
-/*   Updated: 2025/01/15 16:22:12 by wdegraf          ###   ########.fr       */
+/*   Updated: 2025/02/17 14:56:03 by mgering          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,33 +59,32 @@ static void	init_map_and_player(char *file, t_c *cub)
 	draw_map2D(cub);
 	mlx_image_to_window(cub->mlx, cub->img, 0, 0);
 	create_player(cub, 0, 0);
-	mlx_image_to_window(cub->mlx, cub->player.player_img, cub->player.pos.player_x * TILE_SIZE, cub->player.pos.player_y * TILE_SIZE);
+	mlx_image_to_window(cub->mlx, cub->player.player_img, cub->player.pos.player_x * TILE_SIZE + 4, cub->player.pos.player_y * TILE_SIZE + 4);
 }
 
 void	ft_hook(void* param)
 {
 	t_c	*cub = (t_c*)param;
+	t_vector	position = {cub->player.player_img->instances[0].x, cub->player.player_img->instances[0].y};
+
 	cub->player.pos.player_x = cub->player.player_img->instances[0].x;
 	cub->player.pos.player_y = cub->player.player_img->instances[0].y;
 
 	if (mlx_is_key_down(cub->mlx, MLX_KEY_ESCAPE))
 		mlx_close_window(cub->mlx);
-
 	if (mlx_is_key_down(cub->mlx, MLX_KEY_W))
-		cub->player.pos.player_y -=4;
+		position.player_y -= 4;
 	if (mlx_is_key_down(cub->mlx, MLX_KEY_A))
-		cub->player.pos.player_x -= 4;
+		position.player_x -= 4;
 	if (mlx_is_key_down(cub->mlx, MLX_KEY_S))
-		cub->player.pos.player_y += 4;
+		position.player_y += 4;
 	if (mlx_is_key_down(cub->mlx, MLX_KEY_D))
-		cub->player.pos.player_x += 4;
-	cub->player.player_img->instances[0].x = cub->player.pos.player_x;
-	cub->player.player_img->instances[0].y = cub->player.pos.player_y;
-	/* if (!check_collision(new_x, new_y))
-    {
-        cub->player.player_img->instances[0].x = new_x;
-        cub->player.player_img->instances[0].y = new_y;
-    } */
+		position.player_x += 4;
+	if (!collision(cub, position.player_x, position.player_y))
+	{
+		cub->player.player_img->instances[0].x = position.player_x;
+		cub->player.player_img->instances[0].y = position.player_y;
+	}
 }
 
 int	main(int argc, char **argv)
