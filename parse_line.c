@@ -42,7 +42,7 @@ static int	parse_color(char *line, int *color, int i, int out)
 			line++;
 		i++;
 	}
-	out = (150 << 24) | (color[0] << 16) | (color[1] << 8) | color[2];
+	out = (255 << 24) | (color[0] << 16) | (color[1] << 8) | color[2];
 	return (free(color), out);
 }
 

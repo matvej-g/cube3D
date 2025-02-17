@@ -1,49 +1,79 @@
-NAME		:= cub3D
-CC			:= cc
-CFLAGS		:= -Wextra -Wall -Werror -Wunreachable-code -fsanitize=address -g
-LDFLAGS		:= -fsanitize=address
-LIBMLX		:= ./MLX42
-LIBLIBFT	:= ./libft
-HEADERS		:= -I $(LIBMLX)/include/MLX42 -I ./get_next_line
-#LIBS		:= $(LIBLIBFT)/libft.a $(LIBMLX)/build/libmlx42.a -ldl -lglfw -pthread -lm
-LIBS		:= $(LIBLIBFT)/libft.a $(LIBMLX)/build/libmlx42.a -lglfw -framework Cocoa -framework OpenGL -framework IOKit
+# **************************************************************************** #
+#                                                                              #
+#                                                         :::      ::::::::    #
+#    Makefile                                           :+:      :+:    :+:    #
+#                                                     +:+ +:+         +:+      #
+#    By: wdegraf <wdegraf@student.42heilbronn.de    +#+  +:+       +#+         #
+#                                                 +#+#+#+#+#+   +#+            #
+#    Created: 2025/01/06 14:57:16 by wdegraf           #+#    #+#              #
+#    Updated: 2025/01/15 16:15:38 by wdegraf          ###   ########.fr        #
+#                                                                              #
+# **************************************************************************** #
 
+NAME				= cub3d
+CC					= gcc
+CFLAGS				= -Wall -Wextra -Werror -I./MLX42/include -I./libft -I.
+LDFLAGS				= -L./MLX42/build -lmlx42 -L./libft -lft -lglfw -ldl -pthread -lm
 
-SRCS	:=	main.c \
-			parse_map.c \
-			parse_line.c \
-			valid_map.c \
-			create_player.c \
-			draw_map.c
+# -g -fsanitize=address -o 
 
-OBJS	:= ${SRCS:.c=.o}
+REPO_URL			= https://github.com/codam-coding-college/MLX42.git
+LOCAL_DIR			= MLX42
+MLX_LIB				= $(LOCAL_DIR)/build/libmlx42.a
+LIBFT_DIR			= ./libft
+LIBFT_LIB			= $(LIBFT_DIR)/libft.a
 
-all: libmlx $(NAME)
+SRCS				= main.c \
+					parse_map.c \
+					parse_line.c \
+					valid_map.c \
+					create_player.c \
+					draw_map.c \
+					raycast.c \
+					draw_utils.c
+					
+OBJS				= $(SRCS:.c=.o)
 
-libmlx:
-	@if [ ! -d "$(LIBMLX)" ]; then \
-		mkdir -p libs && \
-		git clone https://github.com/codam-coding-college/MLX42.git $(LIBMLX) && \
-		cmake -S $(LIBMLX) -B $(LIBMLX)/build && \
-		make -C $(LIBMLX)/build -j4; \
+all: clone $(LIBFT_LIB) $(MLX_LIB) $(NAME)
+
+clone:
+	@if [ -d $(LOCAL_DIR) ]; then \
+		echo "\033[36mRepository already cloned\033[0m"; \
+	else \
+		echo "\033[32mCloning and building MLX42\033[0m"; \
+		git clone $(REPO_URL) $(LOCAL_DIR) && \
+		cd $(LOCAL_DIR) && \
+		cmake -B build && \
+		cd build && \
+		make; \
 	fi
 
-%.o: %.c
-	$(CC) $(CFLAGS) -o $@ -c $< $(HEADERS)
+$(MLX_LIB): clone
+	@echo "\033[32mBuilding MLX42 library\033[0m"
+	@cd $(LOCAL_DIR) && cmake -B build && cd build && make
 
-$(NAME): $(OBJS)
-	$(MAKE) -C $(LIBLIBFT)
-	$(CC) $(OBJS) $(LIBS) $(HEADERS) $(LDFLAGS) -o $(NAME)
+$(LIBFT_LIB):
+	@echo "\033[32mBuilding libft library\033[0m"
+	@make -C $(LIBFT_DIR)
+
+$(NAME): $(OBJS) $(LIBFT_LIB) $(MLX_LIB)
+	$(CC) $(CFLAGS) -o $(NAME) $(OBJS) $(LDFLAGS)
+	@echo "\033[36m[READY] $(NAME)\033[0m"
+
+%.o: %.c
+	$(CC) $(CFLAGS) -c $< -o $@
+	@echo "\033[32m[OK] $@\033[0m"
 
 clean:
-	$(MAKE) -C $(LIBLIBFT) clean
-	@rm -rf $(OBJS)
+	rm -f $(OBJS)
+	@make -C $(LIBFT_DIR) clean
+	@echo "\033[31mCleanup object files\033[0m"
 
 fclean: clean
-	$(MAKE) -C $(LIBLIBFT) fclean
-	@rm -rf libs
-	@rm -rf $(NAME)
+	rm -f $(NAME)
+	@make -C $(LIBFT_DIR) fclean
+	@echo "\033[31mFull cleanup completed (MLX42 and libft folders retained)\033[0m"
 
-re: clean all
+re: fclean all
 
-.PHONY: all libmlx clean fclean re
+.PHONY: all clone clean fclean re
