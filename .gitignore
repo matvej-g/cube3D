@@ -1,4 +1,6 @@
 cub3d
+cub3D
 .vscode
 MLX42
 *.o
+*.a

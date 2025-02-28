@@ -6,11 +6,11 @@
 /*   By: wdegraf <wdegraf@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/08 15:35:58 by wdegraf           #+#    #+#             */
-/*   Updated: 2025/01/24 11:51:52 by wdegraf          ###   ########.fr       */
+/*   Updated: 2025/02/28 14:23:13 by wdegraf          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "cub3d.h"
+#include "cub3d_bonus.h"
 
 static bool	line_err(char *writ)
 {
@@ -19,31 +19,32 @@ static bool	line_err(char *writ)
 	return (false);
 }
 
-static int	parse_color(char *line, int *color, int i, int out)
+static int	parse_color(char *line, int *color, int i, int *out)
 {
 	color = (int *)malloc(sizeof(int) * 3);
 	if (!color)
 		return (-1);
-	i = 0;
-	while (i < 2)
+	while (i < 3)
 	{
+		color[i] = 0;
 		while (*line == ' ')
 			line++;
+		if (*line < '0' || *line > '9')
+			return (free(color), -1);
 		while (*line >= '0' && *line <= '9')
-		{
-			color[i] = color[i] * 10 + (*line - '0');
-			line++;
-		}
+			color[i] = color[i] * 10 + (*line++ - '0');
 		if (color[i] < 0 || color[i] > 255)
 			return (free(color), -1);
-		if (*line != ',' || *line == '\0')
-			return (free(color), -1);
-		if (*line != '\0')
-			line++;
+		if (i < 2)
+			if (*line++ != ',')
+				return (free(color), -1);
 		i++;
 	}
-	out = (255 << 24) | (color[0] << 16) | (color[1] << 8) | color[2];
-	return (free(color), out);
+	if (*line != ' ')
+		return (free(color), -1);
+	*out = (color[0] << 24) | (color[1] << 16) | (color[2] << 8) | 255;
+	free(color);
+	return (0);
 }
 
 static int	identifier(char *trim_line, char **path)
@@ -103,9 +104,13 @@ bool	parse_line(char *trim_line, t_c *cub, mlx_texture_t *texture,
 		else
 			return (true);
 	}
-	if (ft_strncmp(trim_line, "F", 1) == 0)
-		return (cub->floor = parse_color(trim_line + 2, color, 0, 0), true);
-	if (ft_strncmp(trim_line, "C", 1) == 0)
-		return (cub->roof = parse_color(trim_line + 2, color, 0, 0), true);
+	if ((ft_strncmp(trim_line, "F ", 2) == 0) && cub->floor == -1)
+		return (parse_color(trim_line + 2, color, 0, &cub->floor) == 0);
+	else if ((ft_strncmp(trim_line, "F ", 2) == 0) && cub->floor != -1)
+		return (line_err("Duplicate floor color.\n"));
+	if (ft_strncmp(trim_line, "C ", 2) == 0 && cub->roof == -1)
+		return (parse_color(trim_line + 2, color, 0, &cub->roof) == 0);
+	else if ((ft_strncmp(trim_line, "C ", 2) == 0) && cub->roof != -1)
+		return (line_err("Duplicate floor color.\n"));
 	return (line_err("Invalid line.\n"));
 }

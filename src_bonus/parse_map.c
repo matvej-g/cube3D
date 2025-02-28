@@ -3,19 +3,24 @@
 /*                                                        :::      ::::::::   */
 /*   parse_map.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: wdegraf <wdegraf@student.42heilbronn.de    +#+  +:+       +#+        */
+/*   By: mgering <mgering@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/06 19:24:10 by wdegraf           #+#    #+#             */
-/*   Updated: 2025/01/24 11:52:40 by wdegraf          ###   ########.fr       */
+/*   Updated: 2025/02/27 17:17:15 by mgering          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "cub3d.h"
+#include "cub3d_bonus.h"
 
 static int	map_line_helper(bool map, char *line, t_c *cub, ssize_t size)
 {
+	size_t	len;
+
 	if (map)
 	{
+		len = ft_strlen(line);
+		while (len > 0 && (line[len - 1] == ' ' || line[len - 1] == '\n'))
+			line[--len] = '\0';
 		cub->map = ft_realloc(cub->map, sizeof(char *) * size,
 				sizeof(char *) * (size + 2));
 		if (!cub->map)
@@ -26,20 +31,17 @@ static int	map_line_helper(bool map, char *line, t_c *cub, ssize_t size)
 		size++;
 		cub->map[size] = NULL;
 		cub->map_height++;
-		cub->map_width = ft_strlen(line);
+		if ((int)len > cub->map_width)
+			cub->map_width = (int)len;
 	}
 	else
-	{
 		if (!parse_line(line, cub, NULL, NULL))
 			return (write(2, "Error.\n In parse_line.\n", 23), -1);
-	}
-	line = NULL;
 	return (size);
 }
 
-/// @brief Overwrites the newline character with a space character.
-/// and if the last character of the file is a map character we add 
-/// a space character for wall surround check.
+/// @brief Removes the newline character from the end of the line.
+/// and only adds a space if the last character is a map character (wall check).
 static char	*end_and_newl_char(char *line)
 {
 	size_t	len;
@@ -48,11 +50,13 @@ static char	*end_and_newl_char(char *line)
 	len = ft_strlen(line);
 	if (len > 0 && line[len - 1] == '\n')
 		line[len - 1] = '\0';
-	out = ft_strjoin(line, " ");
-	if (line)
+	if (len > 0 && ft_strchr("01NSEW", line[len - 1]))
+	{
+		out = ft_strjoin(line, " ");
 		free(line);
-	line = NULL;
-	return (out);
+		return (out);
+	}
+	return (line);
 }
 
 static int	map_line2(char *raw_line, t_c *cub, ssize_t size, bool map)
@@ -68,7 +72,7 @@ static int	map_line2(char *raw_line, t_c *cub, ssize_t size, bool map)
 		return (free(line), -1);
 	size = map_line_helper(map, line, cub, size);
 	if (size == -1)
-		return (write(2, "MAP_LINE_HELPER\n", 16), free(line), false);
+		return (write(2, "MAP_LINE_HELPER\n", 16), free(line), -1);
 	free(line);
 	line = NULL;
 	return (size);
@@ -107,10 +111,12 @@ bool	scan_map(char *file, t_c *cub)
 
 	fd = open(file, O_RDONLY);
 	if (fd < 0)
-		er_ex(*cub, "Could not open file\n");
+		er_ex(cub, "Could not open file\n");
 	if (!map_line(fd, cub, 0, false))
 		return (map_err(NULL, fd));
 	close(fd);
-	valid_map(cub, 0, 0, 0);
+	pad_map_lines(cub);
+	if (!valid_map(cub, 0, 0, 0))
+		return (false);
 	return (true);
 }
