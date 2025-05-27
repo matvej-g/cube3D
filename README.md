@@ -19,7 +19,7 @@ A lightweight, Norm-compliant Unix shell in C, supporting command execution, pip
 
 ## About
 
-`cub3D` is a Norm-compliant C raycasting engine inspired by Wolfenstein 3D. It parses a 2D map of walls, floors, and sprites, projects them into a 3D view, and allows the player to navigate the scene in real time.
+`cub3D` is a Norm-compliant C raycasting engine inspired by Wolfenstein 3D. It parses a 2D map of walls, floors, and wall textures, projects them into a 3D view, and allows the player to navigate the scene in real time.
 
 ## Features
 
@@ -38,14 +38,18 @@ A lightweight, Norm-compliant Unix shell in C, supporting command execution, pip
 
 1. **Clone the repo**  
    ```bash
-   git clone https://github.com/YourUsername/minishell.git
+   git clone https://github.com/matvej-g/cube3D
    cd minishell
-   make
+   make bonus
    ```
 
 ## Usage
 
-Run the executable `minishell` and use it like the normal Shell UNIX environemnt.
+Run the executable `cub3D_bonus` with a `map.cub` you can check the example_map.cub to see how to Format the Map.
   ```bash
-  ./minishell
+  ./cub3D_bonus example_map.cub
   ```
+
+You can also just `make` this will creat the `cub3D` executable without the 2D_map
+
+![cub3D_bonus example](image/example.png)
